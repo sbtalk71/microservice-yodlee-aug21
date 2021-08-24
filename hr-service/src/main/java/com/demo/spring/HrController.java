@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
+
 @RestController
 public class HrController {
 
@@ -18,6 +21,9 @@ public class HrController {
 	RestTemplate rt;
 
 	@GetMapping(path = "/hr/details")
+	@HystrixCommand(fallbackMethod = "fallBackGetEmpDetails",commandProperties = {
+			@HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "60000")
+	})
 	public ResponseEntity<String> getEmpDetails(@RequestParam("empId") int empId) {
 
 		HttpHeaders headers = new HttpHeaders();
@@ -28,5 +34,10 @@ public class HrController {
 		ResponseEntity<String> resp = rt.exchange("http://emp-service/emp/find/" + empId, HttpMethod.GET, req,
 				String.class);
 		return resp;
+	}
+	
+	
+	public ResponseEntity<String> fallBackGetEmpDetails(int empId) {
+		return ResponseEntity.ok("Service Unavailable, Try after sometime..");
 	}
 }
