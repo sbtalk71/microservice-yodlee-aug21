@@ -1,5 +1,8 @@
 package com.demo.spring;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,5 +26,12 @@ EmpDao dao;
 		} else {
 			throw new RuntimeException("Emp Not Found");
 		}
+	}
+	
+	
+	@GetMapping(path = "/", produces = {MediaType.APPLICATION_JSON_VALUE})
+	public List<Emp> listAll() {
+		List<Emp> empList = new ArrayList<>(dao.getDb().values());
+		return empList;
 	}
 }
