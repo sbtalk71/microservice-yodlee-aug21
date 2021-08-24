@@ -3,6 +3,8 @@ package com.demo.spring;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +25,8 @@ public class EmpRestController {
 	private EmpRepository repo;
 	
 	@GetMapping(path="emp/find/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity findEmp(@PathVariable("id")int id) {
+	public ResponseEntity findEmp(@PathVariable("id")int id,HttpServletRequest req) {
+		System.out.println("served by : "+req.getLocalAddr()+":"+req.getLocalPort());
 		Optional<Emp> empOp=repo.findById(id);
 		
 		if(empOp.isPresent()) {
